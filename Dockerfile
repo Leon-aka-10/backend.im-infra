@@ -27,8 +27,8 @@ RUN apk add --no-cache --virtual .security-deps \
   libcrypto3
 
 # Install Azure CLI, kubectl, and Helm
-COPY scripts/install-azcli.sh scripts/install-kubectl.sh scripts/install-helm.sh /tmp/
-RUN /tmp/install-azcli.sh && \
+COPY scripts/install-awscli.sh scripts/install-kubectl.sh scripts/install-helm.sh /tmp/
+RUN /tmp/install-awscli.sh && \
   /tmp/install-kubectl.sh && \
   /tmp/install-helm.sh && \
   rm -f /tmp/install-*.sh && \

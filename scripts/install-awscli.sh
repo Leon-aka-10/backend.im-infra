@@ -2,14 +2,14 @@
 set -eo pipefail
 
 # Create isolated virtual environment
-python3 -m venv /opt/awscli
-source /opt/awscli/bin/activate
+python3 -m venv /opt/azcli
+source /opt/azcli/bin/activate
 
-# Install AWS CLI within virtual environment
-pip install --no-cache-dir awscli
+# Install Azure CLI within virtual environment
+pip install --no-cache-dir azure-cli
 
 # Create symlink for system-wide access
-ln -sf /opt/awscli/bin/aws /usr/local/bin/aws
+ln -sf /opt/azcli/bin/az /usr/local/bin/az
 
 # Verify installation
-aws --version || { echo "AWS CLI installation failed"; exit 1; }
+az version || { echo "Azure CLI installation failed"; exit 1; }
