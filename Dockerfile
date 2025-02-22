@@ -27,8 +27,7 @@ RUN apk add --no-cache --virtual .security-deps \
   libcrypto3
 
 #install dependencies for psutil
-RUN apk add --no-cache gcc python3-dev musl-dev linux-headers \
-  apt-get update && apt-get install -y gcc python3-dev
+RUN apk add --no-cache gcc python3-dev musl-dev linux-headers
 
 # Install Azure CLI, kubectl, and Helm
 COPY scripts/install-awscli.sh scripts/install-kubectl.sh /tmp/
