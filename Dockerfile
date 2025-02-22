@@ -35,12 +35,10 @@ RUN adduser -D -u 1001 backenduser && \
     chmod 0755 /home/backenduser && \
     chown -R backenduser:backenduser /home/backenduser/.kube
 
-USER backenduser
-
-#install dependencies for psutil
+# Install dependencies for psutil
 RUN apk add --no-cache gcc python3-dev musl-dev linux-headers
 
-# Install Azure CLI, kubectl, and Helm
+# Install Azure CLI, kubectl
 COPY scripts/install-awscli.sh scripts/install-kubectl.sh /tmp/
 RUN /tmp/install-awscli.sh && \
   /tmp/install-kubectl.sh && \
@@ -54,7 +52,6 @@ COPY deployments/ ./deployments/
 
 # Security hardening
 RUN find ./scripts/ -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod 0755 {} + && \
-  adduser -D -u 1001 backenduser && \
   mkdir -p /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
   chmod 0755 /home/backenduser && \
   chown -R backenduser:backenduser /app /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
