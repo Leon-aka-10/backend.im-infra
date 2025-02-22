@@ -7,10 +7,10 @@ services:
     environment:
       - KUBECONFIG_MODE=${KUBECONFIG_MODE:-azure}  # Explicit mode declaration for Azure
       - KUBECONFIG_FILE=${KUBECONFIG_FILE:-/dev/null}
-      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
-      - AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
-      - AZURE_RESOURCE_GROUP=${AKS_RESOURCE_GROUP}
-      - AKS_CLUSTER_NAME=${AKS_CLUSTER_NAME}
+      - AZURE_TENANT_ID=5fe78ac1-1afe-4009-aa04-a71efb4a5042
+      - AZURE_SUBSCRIPTION_ID=5fe78ac1-1afe-4009-aa04-a71efb4a5042
+      - AZURE_RESOURCE_GROUP=my-resource-group
+      - AKS_CLUSTER_NAME=my-aks-cluster
     expose:
       - "8080"
     ports:
