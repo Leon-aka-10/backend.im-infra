@@ -2,19 +2,19 @@
 set -eo pipefail
 
 # Configuration paths
-AWS_CONFIG_DIR="/home/backenduser/.kube/aws"
+AZURE_CONFIG_DIR="/home/backenduser/.kube/azure"
 MANUAL_CONFIG_DIR="/home/backenduser/.kube/manual"
-AWS_CONFIG="${AWS_CONFIG_DIR}/config"
+AZURE_CONFIG="${AZURE_CONFIG_DIR}/config"
 MANUAL_CONFIG="${MANUAL_CONFIG_DIR}/config"
 
 # Ensure directories exist
-mkdir -p "${AWS_CONFIG_DIR}" "${MANUAL_CONFIG_DIR}"
+mkdir -p "${AZURE_CONFIG_DIR}" "${MANUAL_CONFIG_DIR}"
 
-if [ "$KUBECONFIG_MODE" = "aws" ]; then
-  echo "Initializing AWS EKS configuration..."
+if [ "$KUBECONFIG_MODE" = "azure" ]; then
+  echo "Initializing Azure AKS configuration..."
   
-  # Validate required AWS variables
-  required_vars=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION KUBE_CLUSTER_NAME)
+  # Validate required Azure variables
+  required_vars=(AZURE_SUBSCRIPTION_ID AZURE_RESOURCE_GROUP AKS_CLUSTER_NAME)
   for var in "${required_vars[@]}"; do
       if [[ -z "${!var}" ]]; then
           echo "ERROR: Missing required environment variable $var" >&2
@@ -22,27 +22,31 @@ if [ "$KUBECONFIG_MODE" = "aws" ]; then
       fi
   done
   
-  # Clean existing AWS config
-  rm -f "${AWS_CONFIG}"
+  # Clean existing Azure config
+  rm -f "${AZURE_CONFIG}"
   
-  # Configure AWS CLI
-  aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-  aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-  aws configure set default.region ${AWS_DEFAULT_REGION}
-
-  # Verify EKS cluster exists
-  if ! aws eks describe-cluster --name ${KUBE_CLUSTER_NAME} >/dev/null; then
-      echo "ERROR: Failed to access EKS cluster '${KUBE_CLUSTER_NAME}'" >&2
+  # Login to Azure if not already logged in
+  if ! az account show &>/dev/null; then
+      echo "Logging into Azure..."
+      az login --use-device-code
+  fi
+  
+  # Set the correct subscription
+  az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
+  
+  # Verify AKS cluster exists
+  if ! az aks show --resource-group "${AZURE_RESOURCE_GROUP}" --name "${AKS_CLUSTER_NAME}" &>/dev/null; then
+      echo "ERROR: Failed to access AKS cluster '${AKS_CLUSTER_NAME}'" >&2
       exit 1
   fi
   
-  # Generate fresh config
-  aws eks update-kubeconfig \
-    --name "${KUBE_CLUSTER_NAME}" \
-    --region "${AWS_DEFAULT_REGION}" \
-    --kubeconfig "${AWS_CONFIG}"
+  # Generate fresh kubeconfig
+  az aks get-credentials \
+    --resource-group "${AZURE_RESOURCE_GROUP}" \
+    --name "${AKS_CLUSTER_NAME}" \
+    --file "${AZURE_CONFIG}"
     
-  export KUBECONFIG="${AWS_CONFIG}"
+  export KUBECONFIG="${AZURE_CONFIG}"
 
 elif [ "$KUBECONFIG_MODE" = "manual" ]; then
   echo "Using manual kubeconfig..."

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: test-container
-          image: obimadu/im-base-fastapi
+          image: leon/im-base-fastapi
           resources:
             limits:
               memory: "1Gi"

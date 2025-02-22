@@ -26,10 +26,11 @@ RUN apk add --no-cache --virtual .security-deps \
   openssl \
   libcrypto3
 
-# Install AWS CLI and kubectl
-COPY scripts/install-awscli.sh scripts/install-kubectl.sh /tmp/
-RUN /tmp/install-awscli.sh && \
+# Install Azure CLI, kubectl, and Helm
+COPY scripts/install-azcli.sh scripts/install-kubectl.sh scripts/install-helm.sh /tmp/
+RUN /tmp/install-azcli.sh && \
   /tmp/install-kubectl.sh && \
+  /tmp/install-helm.sh && \
   rm -f /tmp/install-*.sh && \
   rm -rf /var/cache/apk/*
 
@@ -41,15 +42,14 @@ COPY deployments/ ./deployments/
 # Security hardening
 RUN find ./scripts/ -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod 0755 {} + && \
   adduser -D -u 1001 backenduser && \
-  mkdir -p /home/backenduser/.kube/aws /home/backenduser/.kube/manual /home/backenduser/.aws && \
+  mkdir -p /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
   chmod 0755 /home/backenduser && \
-  chown -R backenduser:backenduser /app /home/backenduser/.kube/aws /home/backenduser/.kube/manual /home/backenduser/.aws && \
-  chmod 0700 /home/backenduser/.kube /home/backenduser/.aws
+  chown -R backenduser:backenduser /app /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
+  chmod 0700 /home/backenduser/.kube
 
+# Set environment variables for Azure
 ENV KUBECONFIG=/home/backenduser/.kube/config \
-  AWS_CONFIG_FILE=/home/backenduser/.aws/config \
-  AWS_SHARED_CREDENTIALS_FILE=/home/backenduser/.aws/credentials \
-  AWS_EC2_METADATA_DISABLED=true \
+  AZURE_CONFIG_DIR=/home/backenduser/.azure \
   PATH="/app/scripts:${PATH}" \
   GIT_SSL_NO_VERIFY="false"
 
