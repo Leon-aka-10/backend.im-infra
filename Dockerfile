@@ -26,6 +26,14 @@ RUN apk add --no-cache --virtual .security-deps \
   openssl \
   libcrypto3
 
+# Security hardening
+RUN adduser -D -u 1001 backenduser && \
+    mkdir -p /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
+    chmod 0755 /home/backenduser && \
+    chown -R backenduser:backenduser /home/backenduser/.kube
+
+USER backenduser
+
 #install dependencies for psutil
 RUN apk add --no-cache gcc python3-dev musl-dev linux-headers
 
