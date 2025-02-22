@@ -10,6 +10,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /backendim-brain ./cmd/server
 FROM alpine:3.19
 WORKDIR /app
 
+# Switch to root before installing packages
+USER root
+
 # Install core dependencies
 RUN apk add --no-cache \
   ca-certificates \
