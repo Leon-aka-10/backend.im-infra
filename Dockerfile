@@ -49,8 +49,8 @@ RUN /tmp/install-awscli.sh && \
 RUN mkdir -p /home/backenduser/.kube/azure && \
     touch /home/backenduser/.kube/azure/config && \
     chmod 600 /home/backenduser/.kube/azure/config && \
-    chown backenduser:backenduser /home/backenduser/.kube/azure/config \
-  az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --file /home/backenduser/.kube/azure/config --overwrite-existing
+    chown backenduser:backenduser /home/backenduser/.kube/azure/config && \
+    az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --file /home/backenduser/.kube/azure/config --overwrite-existing
 
 # Application setup
 COPY --from=builder /backendim-brain .
