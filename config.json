@@ -1,5 +1,5 @@
 {
-  "ws_url": "ws://52.138.55.44/ws",
+  "ws_url": "ws://52.138.55.44:8080/ws",
   "repo_url": "http://20.213.11.2:3000/backend.im/backendim-fastapi-app",
   "user_id": "Leonuser-5",
   "chat_id": "Leonchat-5",
