@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # Configuration paths
-KUBECONFIG_PATH="/home/backenduser/.kube/azure/config"
+KUBECONFIG_PATH="/home/azureuser/.kube/azure/config"
 
 echo "Initializing Azure AKS configuration..."
 

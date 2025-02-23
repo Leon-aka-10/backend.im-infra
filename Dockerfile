@@ -30,10 +30,10 @@ RUN apk add --no-cache --virtual .security-deps \
   libcrypto3
 
 # Security hardening
-RUN adduser -D -u 1001 backenduser && \
-    mkdir -p /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
-    chmod 0755 /home/backenduser && \
-    chown -R backenduser:backenduser /home/backenduser/.kube
+RUN adduser -D -u 1001 azureuser && \
+    mkdir -p /home/azureuser/.kube/azure /home/azureuser/.kube/manual && \
+    chmod 0755 /home/azureuser && \
+    chown -R azureuser:azureuser /home/azureuser/.kube
 
 # Install dependencies for psutil
 RUN apk add --no-cache gcc python3-dev musl-dev linux-headers
@@ -46,11 +46,11 @@ RUN /tmp/install-awscli.sh && \
   rm -rf /var/cache/apk/*
 
 # Ensure Kubernetes config file is generated properly
-RUN mkdir -p /home/backenduser/.kube/azure && \
-    touch /home/backenduser/.kube/azure/config && \
-    chmod 600 /home/backenduser/.kube/azure/config && \
-    chown azureuser:azureuser /home/backenduser/.kube/azure/config && \
-    az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --file /home/backenduser/.kube/azure/config --overwrite-existing
+RUN mkdir -p /home/azureuser/.kube/azure && \
+    touch /home/azureuser/.kube/azure/config && \
+    chmod 600 /home/azureuser/.kube/azure/config && \
+    chown azureuser:azureuser /home/azureuser/.kube/azure/config && \
+    az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --file /home/azureuser/.kube/azure/config --overwrite-existing
 
 # Application setup
 COPY --from=builder /backendim-brain .
@@ -59,14 +59,14 @@ COPY deployments/ ./deployments/
 
 # Security hardening
 RUN find ./scripts/ -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod 0755 {} + && \
-  mkdir -p /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
-  chmod 0755 /home/backenduser && \
-  chown -R azureuser:azureuser /app /home/backenduser/.kube/azure /home/backenduser/.kube/manual && \
-  chmod 0700 /home/backenduser/.kube
+  mkdir -p /home/azureuser/.kube/azure /home/azureuser/.kube/manual && \
+  chmod 0755 /home/azureuser && \
+  chown -R azureuser:azureuser /app /home/azureuser/.kube/azure /home/azureuser/.kube/manual && \
+  chmod 0700 /home/azureuser/.kube
 
 # Set environment variables for Azure
-ENV KUBECONFIG=/home/backenduser/.kube/config \
-  AZURE_CONFIG_DIR=/home/backenduser/.azure \
+ENV KUBECONFIG=/home/azureuser/.kube/config \
+  AZURE_CONFIG_DIR=/home/azureuser/.azure \
   PATH="/app/scripts:${PATH}" \
   GIT_SSL_NO_VERIFY="false"
 
