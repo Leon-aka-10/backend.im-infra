@@ -14,7 +14,7 @@ services:
     expose:
       - "8080"
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - repos-data:/app/repos
       - ~/.kube/config:/home/azureuser/.kube/config  # ✅ Mount kubeconfig into the container
