@@ -6,7 +6,7 @@
   "test_command": "pytest tests/",
   "project_type": "fastapi",
   "commits": [
-    "ef66f332efd861a3882c42b88e55ee6c07ae9210",
-    "03a6160b09ac79ef971be320360979ef61f1033d"
+    "87320a94d9e9809e8e9c6dd79530ed5e0efe6b68",
+    "83733d63d6f17c892ad42ce92644282d81451da0"
   ]
 }
