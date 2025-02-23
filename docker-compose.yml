@@ -9,7 +9,7 @@ services:
       - KUBECONFIG_FILE=${KUBECONFIG_FILE:-/dev/null}
       - AZURE_TENANT_ID=5fe78ac1-1afe-4009-aa04-a71efb4a5042
       - AZURE_SUBSCRIPTION_ID=61c877df-9dd0-41e9-95e1-db9b008c5f72
-      - AZURE_RESOURCE_GROUP=my-resource-group
+      - AZURE_RESOURCE_GROUP=myResourceGroup
       - AKS_CLUSTER_NAME=myAKSCluster
     expose:
       - "8080"
