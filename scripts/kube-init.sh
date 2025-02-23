@@ -2,13 +2,13 @@
 set -eo pipefail
 
 # Configuration paths
-KUBECONFIG_PATH="/home/azureuser/.kube/azure/config"
+KUBECONFIG_PATH="${KUBECONFIG_FILE:-/home/azureuser/.kube/config}"  # Uses env var or default path
 
-echo "Initializing Azure AKS configuration..."
+echo "🔄 Initializing Azure AKS configuration..."
 
 # Ensure required environment variables exist
 if [[ -z "$AZURE_SUBSCRIPTION_ID" || -z "$AZURE_RESOURCE_GROUP" || -z "$AKS_CLUSTER_NAME" ]]; then
-    echo "ERROR: Missing required Azure environment variables."
+    echo "❌ ERROR: Missing required Azure environment variables."
     exit 1
 fi
 
@@ -18,30 +18,35 @@ mkdir -p "$(dirname "$KUBECONFIG_PATH")"
 # Remove any corrupted kubeconfig file
 if [[ -f "$KUBECONFIG_PATH" ]]; then
     if ! grep -q "apiVersion: v1" "$KUBECONFIG_PATH"; then
-        echo "WARNING: Corrupt kubeconfig detected. Removing..."
+        echo "⚠️ WARNING: Corrupt kubeconfig detected. Removing..."
         rm -f "$KUBECONFIG_PATH"
     fi
 fi
 
 # Authenticate with Azure if needed
 if ! az account show &>/dev/null; then
-    echo "Logging into Azure..."
+    echo "🔐 Logging into Azure..."
     az login --use-device-code
 fi
 
 # Set correct subscription
+echo "🔄 Setting Azure subscription..."
 az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 
 # Fetch AKS credentials
-echo "Fetching kubeconfig from AKS..."
+echo "⏳ Fetching kubeconfig from AKS..."
 az aks get-credentials --resource-group "$AZURE_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --file "$KUBECONFIG_PATH" --overwrite-existing
 
 # Validate kubeconfig file
 if [[ ! -s "$KUBECONFIG_PATH" ]]; then
-    echo "ERROR: Failed to generate a valid kubeconfig file!"
+    echo "❌ ERROR: Failed to generate a valid kubeconfig file!"
     exit 1
 fi
 
-echo "Kubernetes configuration successfully initialized!"
+# Ensure correct file permissions
+chmod 600 "$KUBECONFIG_PATH"
+chown azureuser:azureuser "$KUBECONFIG_PATH" || true  # Only works if running as root
+
+echo "✅ Kubernetes configuration successfully initialized!"
 
 exec "$@"
