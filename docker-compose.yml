@@ -17,7 +17,7 @@ services:
       - "80:8080"
     volumes:
       - repos-data:/app/repos
-      - ${KUBECONFIG_FILE}:/home/backenduser/.kube/manual/config  # Only for manual mode
+      - ${KUBECONFIG_FILE}:/home/azureuser/.kube/manual/config  # Only for manual mode
     labels:
       - "traefik.enable=true"
       # service
