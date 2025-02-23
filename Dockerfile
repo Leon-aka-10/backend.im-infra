@@ -45,6 +45,14 @@ RUN /tmp/install-awscli.sh && \
   rm -f /tmp/install-*.sh && \
   rm -rf /var/cache/apk/*
 
+# Ensure Kubernetes config file is generated properly
+RUN touch /home/backenduser/.kube/azure/config && \
+    chmod 600 /home/backenduser/.kube/azure/config && \
+    chown backenduser:backenduser /home/backenduser/.kube/azure/config
+
+# Fetch AKS credentials on container start
+RUN az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing
+
 # Application setup
 COPY --from=builder /backendim-brain .
 COPY scripts/ ./scripts/
